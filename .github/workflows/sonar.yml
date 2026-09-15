@@ -36,7 +36,7 @@ jobs:
         with:
           args: >
             -Dsonar.organization=guan-pujun
-            -Dsonar.projectKey=Guan-Pujun_bcmp-python-prerelease
+            -Dsonar.projectKey=Guan-Pujun_bcmp-python
             -Dsonar.sources=src
             -Dsonar.tests=tests
             -Dsonar.python.version=3.12
