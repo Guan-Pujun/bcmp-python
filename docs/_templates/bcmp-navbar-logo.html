@@ -1,0 +1,11 @@
+<div class="navbar-brand">
+  <a class="logo" href="{{ pathto(root_doc) }}">
+    <img src="{{ pathto(theme_logo['image_light'], 1) }}"
+         class="logo__image only-light"
+         alt="{{ theme_logo['alt_text'] }}" />
+    <img src="{{ pathto(theme_logo['image_dark'], 1) }}"
+         class="logo__image only-dark pst-js-only"
+         alt="{{ theme_logo['alt_text'] }}" />
+  </a>
+  <span class="title logo__title">{{ theme_logo['text'] }}</span>
+</div>

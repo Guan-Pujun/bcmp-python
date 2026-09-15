@@ -1,0 +1,7 @@
+{
+  "k_high": 499,
+  "k_low": 3,
+  "required_batch_coverage": 2,
+  "required_batch_coverage_source": "default_fraction",
+  "status": "binary_search_best_pass"
+}

@@ -1,0 +1,4 @@
+domain	domain_size	domain_cell_frac	effective_batch_count	domain_mixing_status
+0	1017	0.678	3	pass
+1	320	0.21333333333333335	3	pass
+2	163	0.10866666666666666	3	pass

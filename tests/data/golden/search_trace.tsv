@@ -1,0 +1,11 @@
+iter_id	phase	k	mixing_status	n_domains	n_failed_domains	n_residual_domains	actual_residual_cell_frac
+1	k_low	3	fail	19	2	6	0.03933333333333333
+2	k_high	499	pass	1	0	0	0.0
+3	k_mid	251	pass	1	0	0	0.0
+4	k_mid	127	pass	1	0	0	0.0
+5	k_mid	65	pass	3	0	0	0.0
+6	k_mid	34	pass	6	0	1	0.024666666666666667
+7	k_mid	18	pass	7	0	1	0.024666666666666667
+8	k_mid	10	pass	9	0	1	0.024666666666666667
+9	k_mid	6	pass	9	0	2	0.042666666666666665
+10	k_mid	4	pass	12	0	3	0.037333333333333336

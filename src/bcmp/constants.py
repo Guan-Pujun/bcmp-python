@@ -1,0 +1,26 @@
+"""Shared lightweight constants."""
+
+from __future__ import annotations
+
+from typing import Literal
+
+OutputLevel = Literal["standard", "debug"]
+
+DEFAULT_BATCH_KEY = "batch"
+DEFAULT_K_MIN = 3
+DEFAULT_PARTITION_N_PCS = 30
+DEFAULT_PARTITION_N_HVG = 2000
+DEFAULT_SEED = 236
+
+DEFAULT_MIN_EFFECTIVE_CELLS_IN_DOMAIN_PER_BATCH = 5
+DEFAULT_MAX_UNDERREPRESENTATION_FOLD = 10
+DEFAULT_MAX_RESIDUAL_CELL_FRAC = 0.05
+DEFAULT_BATCH_FRAC_THRESHOLD_FOR_K_MAX = 0.01
+DEFAULT_MIN_BATCH_COVERAGE_FRAC = 0.5
+INT32_INDEX_MAX = 2_147_483_647
+
+CANONICAL_LABEL_COLUMN = "bcmp_domain"
+BCMP_PCA_EMBEDDING_KEY = "X_bcmp_pca"
+BCMP_UMAP_EMBEDDING_KEY = "X_bcmp_umap"
+
+OUTPUT_LEVEL_VALUES = frozenset({"standard", "debug"})

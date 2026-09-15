@@ -1,0 +1,9 @@
+{
+  "mixing_status": "pass",
+  "n_domains": 12,
+  "n_evaluated_domains": 9,
+  "n_residual_cells": 56,
+  "n_residual_domains": 3,
+  "residual_cell_frac": 0.037333333333333336,
+  "selected_k": 4
+}

@@ -1,0 +1,14 @@
+{
+  "batch_frac_threshold_for_k_max": 0.01,
+  "batch_key": "batch",
+  "exclude_cells": null,
+  "k_max": null,
+  "k_min": 3,
+  "max_residual_cell_frac": 0.05,
+  "max_underrepresentation_fold": 10,
+  "min_batch_coverage": null,
+  "min_cells_in_domain_per_batch": 5,
+  "partition_n_hvg": 2000,
+  "partition_n_pcs": 30,
+  "seed": 236
+}
