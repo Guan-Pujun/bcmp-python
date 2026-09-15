@@ -5,8 +5,85 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
+import pytest
 
 import bcmp.adata.preprocess as preprocess
+
+
+@pytest.mark.parametrize("dtype", [np.int8, np.float64])
+def test_duplicate_counts_normalize_without_overflow_or_input_changes(dtype) -> None:
+    counts = sp.csr_matrix(
+        (np.array([100, 100, 100], dtype=dtype), [0, 0, 1], [0, 3, 3]),
+        shape=(2, 2),
+    )
+    original = counts.copy()
+    observed = preprocess.normalize_log1p_counts(counts)
+    expected = np.log1p([[20000 / 3, 10000 / 3], [0, 0]])
+
+    np.testing.assert_allclose(observed.toarray(), expected)
+    np.testing.assert_array_equal(counts.data, original.data)
+    np.testing.assert_array_equal(counts.indices, original.indices)
+    np.testing.assert_array_equal(counts.indptr, original.indptr)
+
+
+@pytest.mark.parametrize("sparse_format", ["csr", "csc"])
+def test_duplicate_counts_preserve_public_workflow_results(sparse_format) -> None:
+    import anndata as ad
+
+    from bcmp import bcmp
+
+    rng = np.random.default_rng(236)
+    counts = sp.csr_matrix(rng.poisson(np.linspace(0.3, 12, 80), size=(100, 80)))
+    split = np.empty(2 * counts.nnz, dtype=counts.dtype)
+    split[::2] = counts.data // 2
+    split[1::2] = counts.data - counts.data // 2
+    duplicate = sp.csr_matrix(
+        (split, np.repeat(counts.indices, 2), counts.indptr * 2), shape=counts.shape
+    ).asformat(sparse_format)
+    adata = ad.AnnData(
+        X=duplicate,
+        obs=pd.DataFrame(
+            {"batch": ["a"] * 50 + ["b"] * 50},
+            index=[f"c{i}" for i in range(100)],
+        ),
+    )
+    canonical = adata.copy()
+    canonical.X = counts.asformat(sparse_format)
+    original = adata.X.copy()
+    kwargs = dict(partition_n_hvg=20, partition_n_pcs=5, k_max=8, verbose=False)
+    expected = bcmp(canonical, output_level="debug", **kwargs)
+    observed = bcmp(adata, output_level="debug", **kwargs)
+
+    assert observed.debug.workflow == expected.debug.workflow
+    assert observed.selection == expected.selection
+    pd.testing.assert_frame_equal(observed.search_trace, expected.search_trace)
+    pd.testing.assert_series_equal(
+        observed.adata.obs["bcmp_domain"], expected.adata.obs["bcmp_domain"]
+    )
+    np.testing.assert_allclose(
+        observed.adata.obsm["X_bcmp_pca"], expected.adata.obsm["X_bcmp_pca"]
+    )
+    np.testing.assert_array_equal(adata.X.data, original.data)
+    np.testing.assert_array_equal(adata.X.indices, original.indices)
+    np.testing.assert_array_equal(adata.X.indptr, original.indptr)
+
+
+@pytest.mark.parametrize("sparse", [False, True])
+def test_public_workflow_rejects_complex_counts(sparse) -> None:
+    import anndata as ad
+
+    from bcmp import bcmp
+
+    counts = np.full((100, 4), 1 + 1j)
+    adata = ad.AnnData(
+        X=sp.csr_matrix(counts) if sparse else counts,
+        obs=pd.DataFrame(
+            {"batch": ["a"] * 50 + ["b"] * 50},
+            index=[f"c{i}" for i in range(100)],
+        ),
+    )
+    with pytest.raises(ValueError, match="real numeric count values"):
+        bcmp(adata, verbose=False)
 
 
 def test_normalization_and_scaling_follow_expected_sparse_math() -> None:

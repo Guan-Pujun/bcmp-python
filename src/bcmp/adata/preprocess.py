@@ -32,10 +32,19 @@ __all__ = [
 BATCH_HVG_MIN_CELLS = 3
 
 
+def _canonical_counts(counts: sp.csr_matrix) -> sp.csr_matrix:
+    counts = as_csr_matrix(counts)
+    if not counts.has_canonical_format:
+        # Cast before summing to avoid overflow in narrow integer count arrays.
+        counts = counts.astype(np.float64, copy=True)
+        counts.sum_duplicates()
+    return counts
+
+
 def normalize_log1p_counts(
     counts: sp.csr_matrix, target_sum: float = 1e4
 ) -> sp.csr_matrix:
-    counts = as_csr_matrix(counts)
+    counts = _canonical_counts(counts)
     totals = np.asarray(counts.sum(axis=1)).ravel()
     scale = np.divide(
         float(target_sum),
@@ -54,6 +63,8 @@ def normalize_log1p_counts(
 
 def _validate_nonnegative_finite_counts(counts: sp.csr_matrix) -> None:
     data = as_csr_matrix(counts).data
+    if np.iscomplexobj(data):
+        raise ValueError("adata.X must contain real numeric count values")
     try:
         finite = np.isfinite(data)
         has_negative = np.any(data < 0.0)
@@ -187,7 +198,7 @@ def _select_highly_variable_genes_seurat_v5_vst_dgcmatrix(
     if n_top < 1:
         raise ValueError("n_top_genes must be positive")
 
-    counts = sp.csc_matrix(as_csr_matrix(raw_counts), dtype=np.float64)
+    counts = sp.csc_matrix(_canonical_counts(raw_counts), dtype=np.float64)
     n_cells, n_genes = counts.shape
     if n_cells < 2:
         raise ValueError("Seurat v5 VST requires at least 2 cells")
