@@ -53,7 +53,7 @@ For the development version:
 
 .. code-block:: console
 
-   git clone <BCMP repository URL>
+   git clone https://github.com/Guan-Pujun/bcmp-python.git
    cd bcmp-python
    python -m pip install .
 

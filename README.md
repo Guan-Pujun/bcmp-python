@@ -8,14 +8,13 @@
 <br>
 
 <p align="center">
-  <a href="https://codecov.io/github/Guan-Pujun/bcmp-python"><img src="https://codecov.io/github/Guan-Pujun/bcmp-python/graph/badge.svg?token=9MGXPGWRVI&amp;color=brightgreen" alt="Codecov"></a>
   <a href="https://github.com/Guan-Pujun/bcmp-python/actions/workflows/ci.yml"><img src="https://github.com/Guan-Pujun/bcmp-python/actions/workflows/ci.yml/badge.svg?branch=main" alt="Tests"></a>
   <a href="https://github.com/Guan-Pujun/bcmp-python/actions/workflows/package.yml"><img src="https://github.com/Guan-Pujun/bcmp-python/actions/workflows/package.yml/badge.svg?branch=main" alt="Build"></a>
   <a href="https://github.com/Guan-Pujun/bcmp-python/actions/workflows/docs.yml"><img src="https://github.com/Guan-Pujun/bcmp-python/actions/workflows/docs.yml/badge.svg?branch=main" alt="Documentation"></a>
   <br>
+  <a href="https://codecov.io/github/Guan-Pujun/bcmp-python"><img src="https://codecov.io/github/Guan-Pujun/bcmp-python/graph/badge.svg?token=9MGXPGWRVI&amp;color=brightgreen" alt="Codecov"></a>
   <a href="https://sonarcloud.io/summary/new_code?id=Guan-Pujun_bcmp-python"><img src="https://sonarcloud.io/api/project_badges/measure?project=Guan-Pujun_bcmp-python&amp;metric=alert_status&amp;token=80ac6bae4b632a9fc13f1b7be053d2212421e76e" alt="SonarQube Quality Gate"></a>
-  <!-- OpenSSF Scorecard badge is activated when the formal repository is public. -->
-  <!-- OpenSSF Best Practices badge is activated after project registration. -->
+  <a href="https://www.bestpractices.dev/projects/14665"><img src="https://www.bestpractices.dev/projects/14665/badge" alt="OpenSSF Best Practices"></a>
 </p>
 
 <br>
