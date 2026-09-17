@@ -151,6 +151,7 @@ def test_cell_count_limit_is_checked_before_large_allocations() -> None:
     ("embedding", "message"),
     [
         (np.arange(6, dtype=float), "embedding must be a 2D array"),
+        (np.empty((6, 0)), "embedding must contain at least one dimension"),
         (
             np.array([[0.0], [1.0], [np.nan], [3.0], [4.0], [5.0]]),
             "finite values",
@@ -167,6 +168,14 @@ def test_embedding_requires_a_finite_numeric_matrix(
 ) -> None:
     with pytest.raises(ValueError, match=message):
         bcmp_embedding(embedding, ["a", "a", "a", "b", "b", "b"])
+
+
+def test_embedding_rejects_float32_overflow() -> None:
+    embedding = np.full((12, 2), 1e40, dtype=np.float64)
+    batches = ["a"] * 6 + ["b"] * 6
+
+    with pytest.raises(ValueError, match="finite float32 values"):
+        bcmp_embedding(embedding, batches, verbose=False)
 
 
 def test_embedding_requires_one_batch_label_per_cell() -> None:
@@ -422,6 +431,12 @@ def test_anndata_rejects_noninteger_partition_counts(parameter, value) -> None:
     adata = _example_adata()
     with pytest.raises(ValueError, match=f"{parameter} must be an integer"):
         bcmp(adata, **{parameter: value}, verbose=False)
+
+
+def test_anndata_rejects_zero_pcs() -> None:
+    adata = _example_adata()
+    with pytest.raises(ValueError, match="partition_n_pcs must be at least 1"):
+        bcmp(adata, partition_n_pcs=0, verbose=False)
 
 
 def test_anndata_rejects_a_nonpositive_hvg_count() -> None:

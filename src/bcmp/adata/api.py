@@ -91,6 +91,8 @@ def bcmp(
     ):
         if isinstance(value, bool) or not isinstance(value, Integral):
             raise ValueError(f"{name} must be an integer")
+    if partition_n_pcs < 1:
+        raise ValueError("partition_n_pcs must be at least 1")
 
     _require_batch_key(adata, batch_key)
 
