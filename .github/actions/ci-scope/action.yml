@@ -1,0 +1,39 @@
+name: Determine Python CI scope
+description: Keep required checks conclusive while avoiding package checks for documentation-only pull requests.
+outputs:
+  tests:
+    description: Whether tests and code quality checks are required.
+    value: ${{ steps.scope.outputs.tests }}
+  build:
+    description: Whether package build and installation checks are required.
+    value: ${{ steps.scope.outputs.build }}
+runs:
+  using: composite
+  steps:
+    - id: scope
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          let tests = true;
+          let build = true;
+          if (context.eventName === "pull_request") {
+            const pull = context.payload.pull_request;
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              ...context.repo, pull_number: pull.number, per_page: 100
+            });
+            const isDocumentation = path =>
+              path.startsWith("docs/") || /^[^/]+\.md$/.test(path);
+            // Unknown, incomplete or renamed package paths must not suppress checks.
+            const allPathsMatch = predicate => files.length > 0 &&
+              files.length === pull.changed_files &&
+              files.every(file => predicate(file.filename) &&
+                (!file.previous_filename || predicate(file.previous_filename)));
+            tests = !allPathsMatch(isDocumentation);
+            build = !allPathsMatch(path => isDocumentation(path) && path !== "README.md");
+          }
+          core.setOutput("tests", String(tests));
+          core.setOutput("build", String(build));
+          await core.summary.addRaw([
+            tests ? "Tests and code quality: required." : "Tests and code quality: not applicable to documentation-only changes.",
+            build ? "Package build and installation: required." : "Package build and installation: not applicable to documentation-only changes."
+          ].join("\n\n")).write();
