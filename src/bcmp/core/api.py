@@ -67,6 +67,8 @@ def bcmp_embedding(
     embedding_shape = np.shape(embedding)
     if len(embedding_shape) != 2:
         raise ValueError("embedding must be a 2D array")
+    if embedding_shape[1] < 1:
+        raise ValueError("embedding must contain at least one dimension")
     require_int32_cell_count(int(embedding_shape[0]), context="BCMP embedding")
     embedding_arr = np.asarray(embedding)
     if embedding_arr.ndim != 2:

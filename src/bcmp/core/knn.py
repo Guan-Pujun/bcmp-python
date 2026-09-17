@@ -20,7 +20,10 @@ def get_knn_neighbor_once(
     if n_cells < 3:
         raise ValueError("At least 3 cells are required for KNN search")
     require_int32_cell_count(n_cells, context="BCMP KNN")
-    embeddings32 = np.asarray(embeddings, dtype=np.float32)
+    with np.errstate(over="ignore"):
+        embeddings32 = np.asarray(embeddings, dtype=np.float32)
+    if not bool(np.isfinite(embeddings32).all()):
+        raise ValueError("embedding must contain only finite float32 values")
 
     k_use = min(int(k_max), embeddings32.shape[0] - 1)
     if k_use < 1:
