@@ -150,10 +150,6 @@ div.navbar-brand:hover {
   width: 3rem;
 }
 
-.bd-sidebar-primary {
-  display: none !important;
-}
-
 .bcmp-lead {
   color: var(--pst-color-text-muted);
   font-size: 1.2rem;
