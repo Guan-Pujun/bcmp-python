@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bcmp"
-version = "0.99.0"
+version = "1.0.0"
 description = "Batch-Constraint Manifold Partition (BCMP) for evaluating batch-effect removal in single-cell integration."
 readme = "README.md"
 license = "GPL-3.0-or-later"
