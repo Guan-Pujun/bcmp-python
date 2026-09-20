@@ -1,7 +1,6 @@
 name: Final clean-environment verification
 on:
-  push:
-    branches: ["verify/python-1.0.0-clean"]
+  workflow_dispatch:
 permissions:
   contents: read
 env:

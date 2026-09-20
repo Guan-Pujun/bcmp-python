@@ -29,6 +29,9 @@ def pip(*args):
 def hashes(root):
     return {str(f.relative_to(root)): hashlib.sha256(f.read_bytes()).hexdigest()
             for f in sorted(root.rglob("*")) if f.is_file()}
+def committed_bytes(file):
+    relative = file.relative_to(candidate).as_posix()
+    return subprocess.check_output(["git", "-C", str(candidate), "show", f"HEAD:{relative}"])
 golden = hashes(candidate / "tests/data")
 wheel = next(dist.glob("*.whl"))
 sdist = next(dist.glob("*.tar.gz"))
@@ -42,7 +45,12 @@ assert not installed.is_relative_to(candidate), installed
 assert metadata.version("bcmp") == "1.0.0"
 for f in (candidate / "src/bcmp").rglob("*"):
     if f.is_file() and "__pycache__" not in f.parts and f.suffix not in (".pyc", ".pyo"):
-        assert f.read_bytes() == (installed / f.relative_to(candidate / "src/bcmp")).read_bytes(), f
+        original = committed_bytes(f)
+        actual = (installed / f.relative_to(candidate / "src/bcmp")).read_bytes()
+        if f.read_bytes() != original:
+            assert f.read_bytes().replace(b"\r\n", b"\n") == original, f
+            print("Git checkout newline conversion:", f.name, flush=True)
+        assert original == actual, f
 pip("install", "pytest")
 pip("check")
 record = {
@@ -67,7 +75,7 @@ run(sys.executable, "-c",
     "assert diabetic_kidney_lite().shape == (1500,27980); print('sdist installation verified')")
 for f in (candidate / "src/bcmp").rglob("*"):
     if f.is_file() and "__pycache__" not in f.parts and f.suffix not in (".pyc", ".pyo"):
-        assert f.read_bytes() == (installed / f.relative_to(candidate / "src/bcmp")).read_bytes(), f
+        assert committed_bytes(f) == (installed / f.relative_to(candidate / "src/bcmp")).read_bytes(), f
 record["golden_after"] = hashes(candidate / "tests/data")
 record["result"] = "passed"
 (output / "environment.json").write_text(json.dumps(record, indent=2) + "\n")
